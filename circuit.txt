@@ -1,0 +1,6 @@
+12V 5A power supply
+12V 0.7A 
+
+12v 0.08
+
+I = V/R
