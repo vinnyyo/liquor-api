@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import services
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
@@ -12,14 +13,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    return {"message": "Hello World"}
-
-@app.get("/get_status")
-async def get_status():
-    output = services.get_status()
-    return output
+    with open('shot.html', 'r') as file:
+        html_content = file.read()
+    return HTMLResponse(content=html_content, status_code=200)
 
 @app.get("/take_shot")
 async def take_shot():

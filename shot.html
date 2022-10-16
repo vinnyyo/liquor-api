@@ -1,8 +1,213 @@
-<script type="text/javascript">
-    //create XMLHttpRequest object
-const xhr = new XMLHttpRequest()
-//open a get request with the remote server URL
-xhr.open("GET", "http://127.0.0.1:8000/take_shot")
-//send the Http request
-xhr.send()
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispenser</title>
+    <style>
+        :root {
+        --boxBackground: #6cebe0;
+        font: 1em sans-serif;
+        width: 100%;
+        height: 150px;
+        text-align: center;
+        /* background-color: #2f6cb1; */
+    }
+    .title {
+        margin-top: 0;
+    }
+    .messageBox {
+        width: 80%;
+        height: 150px;
+        padding: 12px 20px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        background-color: #f8f8f8;
+        font-size: 100px;
+        resize: none;
+    }
+    #submitButton {
+        width: 80%;
+        border-radius: 4px;
+        padding: 12px 20px;
+        font-size: 16px;
+        margin-top: 3mm;
+    }
+    #submitButton:hover {
+        width: 80%;
+        border-radius: 4px;
+        padding: 12px 20px;
+        font-size: 16px;
+        margin-top: 3mm;
+        background-color: black;
+        color: white;
+    }
+    #convertButton {
+        width: 30%;
+        border-radius: 4px;
+        padding: 12px 0px;
+        font-size: 16px;
+        margin-top: 3mm;
+    }
+    #convertButton:hover {
+        width: 30%;
+        border-radius: 4px;
+        padding: 12px 0px;
+        font-size: 16px;
+        margin-top: 3mm;
+        background-color: black;
+        color: white;
+    }
+    @media only screen and (max-width: 800px){
+        .messageBox {
+        width: 100%;
+        height: 150px;
+        padding: 12px 0px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        background-color: #f8f8f8;
+        font-size: 100px;
+        resize: none;
+    }
+    #submitButton {
+        width: 100%;
+        border-radius: 4px;
+        padding: 12px 0px;
+        font-size: 16px;
+        margin-top: 3mm;
+    }
+    #submitButton:hover {
+        width: 100%;
+        border-radius: 4px;
+        padding: 12px 0px;
+        font-size: 16px;
+        margin-top: 3mm;
+        background-color: black;
+        color: white;
+    }
+    #convertButton {
+        width: 30%;
+        border-radius: 4px;
+        padding: 12px 0px;
+        font-size: 16px;
+        margin-top: 3mm;
+    }
+    #convertButton:hover {
+        width: 30%;
+        border-radius: 4px;
+        padding: 12px 0px;
+        font-size: 16px;
+        margin-top: 3mm;
+        background-color: black;
+        color: white;
+    }
+    }
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        const ipAddress = "10.0.0.197";
+        const url = "http://"+ipAddress+":8000";
+        //create XMLHttpRequest object
+        const xhr = new XMLHttpRequest()
+
+        var mls = false;
+        var ozs = true;
+        var shots = false;
+
+        function sendShotRequest(amount) {
+            //open a get request with the remote server URL
+            xhr.open("GET", url+"/take_shot/"+convertToOunces(amount));
+            //send the Http request
+            xhr.send();
+        }
+
+        function useMls(amount) {
+            var ounces = convertToOunces(amount);
+            mls = true;
+            ozs = false;
+            shots = false;
+            document.getElementById('encrypted').value = ounces * 29.5735
+            document.getElementById("units").innerHTML = "Milliliters";
+        }
+
+        function useOzs(amount) {
+            var ounces = convertToOunces(amount);
+            mls = false;
+            ozs = true;
+            shots = false;
+            document.getElementById('encrypted').value = ounces
+            document.getElementById("units").innerHTML = "Ounces";
+        }
+
+        function useShots(amount) {
+            var ounces = convertToOunces(amount);
+            mls = false;
+            ozs = false;
+            shots = true;
+            document.getElementById('encrypted').value = ounces / 1.5
+            document.getElementById("units").innerHTML = "Shots";
+        }
+
+        function convertToOunces(amount) {
+            if (mls) {
+                return amount / 29.5735;
+            } else if (shots) {
+                return amount * 1.5;
+            } else {
+                return amount;
+            }
+        }
+
+
+
+        function copyToClipboard(text) {
+            if (window.clipboardData && window.clipboardData.setData) {
+                // Internet Explorer-specific code path to prevent textarea being shown while dialog is visible.
+                return window.clipboardData.setData("Text", text);
+            
+            }
+            else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+                var textarea = document.createElement("textarea");
+                textarea.textContent = text;
+                textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in Microsoft Edge.
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+                }
+                catch (ex) {
+                    console.warn("Copy to clipboard failed.", ex);
+                    return false;
+                }
+                finally {
+                    document.body.removeChild(textarea);
+                }
+            }
+        }
+        
+        
+        function decide() {
+            var a = Math.floor(Math.random() * 255);
+            var b = Math.floor(Math.random() * 255);
+            var c = Math.floor(Math.random() * 255);
+            document.body.style.backgroundColor = 'rgb(' + a + ',' + b + ',' + c + ')';
+        }
+        var encryptCursor = 0;
+        var decryptCursor = 0;
+        setInterval(decide, 100);
+    </script>
+        <h1 class="title">Shot Dispenser</h1>
+        <h2>Amount</h2>
+        <h2 id="units">Ounces</h2>
+        <button id="convertButton" onclick="useMls(document.getElementById('encrypted').value)">Milliliters</button>
+        <button id="convertButton" onclick="useOzs(document.getElementById('encrypted').value)">Ounces</button>
+        <button id="convertButton" onclick="useShots(document.getElementById('encrypted').value)">Shots</button>
+        <input type="number" class="messageBox" name="encrypt" id="encrypted">
+        </br>
+        <button id="submitButton" onclick="sendShotRequest(document.getElementById('encrypted').value)">Dispense</button>
+</body>
+</html>
