@@ -3,7 +3,8 @@ import time
 
 GPIO.setmode(GPIO.BCM)
 
-pump = "GPIO23"
+#GPIO23
+pump = 23
 
 one_oz_ml = 29.5735
 
