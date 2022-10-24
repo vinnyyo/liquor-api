@@ -9,7 +9,7 @@ pump = 23
 one_oz_ml = 29.5735
 
 # must calculate
-ml_per_second = 1
+ml_per_second = 1.1
 
 GPIO.setup(pump, GPIO.OUT)
 
